@@ -61,6 +61,8 @@
     .item-number { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
     .btn-delete { flex-shrink: 0; padding: 8px 14px; background: #FDF0F0; color: #D9534F; border: 1.5px solid #F5C6C5; border-radius: 8px; font-size: 0.8rem; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: background 0.2s; }
     .btn-delete:hover { background: #D9534F; color: #fff; }
+    .btn-reset { padding: 6px 14px; background: transparent; color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.78rem; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .btn-reset:hover { background: #D9534F; color: #fff; border-color: #D9534F; }
     .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--dark); color: #fff; padding: 12px 24px; border-radius: 999px; font-size: 0.88rem; opacity: 0; transition: all 0.3s ease; z-index: 999; white-space: nowrap; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
@@ -342,7 +344,10 @@
     </div>
     <div class="list-header">
       <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--brown)">예약 목록</h3>
-      <span class="list-count" id="res-count">0건</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="list-count" id="res-count">0건</span>
+        <button class="btn-reset" onclick="resetAll()">전체 초기화</button>
+      </div>
     </div>
     <div id="res-list"></div>
   </div>
@@ -411,7 +416,15 @@
 
 <div class="toast" id="toast"></div>
 <script>
-  let reservations = [];
+  const STORAGE_KEY = 'morningbrew_reservations';
+
+  // localStorage에서 불러오기
+  let reservations = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+  }
+
   function addReservation() {
     const name   = document.getElementById('r-name').value.trim();
     const phone  = document.getElementById('r-phone').value.trim();
@@ -423,6 +436,7 @@
     if (!time)  { showToast('⚠️ 픽업 시간을 선택해주세요'); return; }
     reservations.push({ id: Date.now(), name, phone, time, people });
     reservations.sort((a, b) => a.time.localeCompare(b.time));
+    save();
     renderList();
     document.getElementById('r-name').value = '';
     document.getElementById('r-phone').value = '';
@@ -430,11 +444,22 @@
     document.getElementById('r-people').value = '1';
     showToast('✓ 예약이 추가되었습니다');
   }
+
   function deleteReservation(id) {
     reservations = reservations.filter(r => r.id !== id);
+    save();
     renderList();
     showToast('🗑 예약이 삭제되었습니다');
   }
+
+  function resetAll() {
+    if (!confirm('예약 목록을 전체 초기화할까요?')) return;
+    reservations = [];
+    save();
+    renderList();
+    showToast('🗑 전체 초기화 완료');
+  }
+
   function renderList() {
     const area = document.getElementById('res-list');
     document.getElementById('res-count').textContent = reservations.length + '건';
@@ -446,18 +471,23 @@
       `<div class="reservation-item"><div class="item-info"><div class="item-name">${i+1}. ${esc(r.name)}</div><div class="item-meta"><span class="item-tag">🕐 ${r.time}</span><span class="item-tag">👤 ${r.people}명</span></div><div class="item-number">📞 ${esc(r.phone)}</div></div><button class="btn-delete" onclick="deleteReservation(${r.id})">삭제</button></div>`
     ).join('') + `</div>`;
   }
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2200);
   }
+
   function formatPhone(el) {
     let v = el.value.replace(/\D/g, '').slice(0, 11);
     if (v.length <= 3) el.value = v;
     else if (v.length <= 7) el.value = v.slice(0,3) + '-' + v.slice(3);
     else el.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7);
   }
+
   function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // 페이지 로드 시 localStorage 데이터 복원
   renderList();
 </script>
 </body>
