@@ -415,17 +415,51 @@
 </footer>
 
 <div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhhQKYedXIYQATOnhNTLp84CtTW3eTaWY",
+    authDomain: "morningbrew-ebaba.firebaseapp.com",
+    projectId: "morningbrew-ebaba",
+    storageBucket: "morningbrew-ebaba.firebasestorage.app",
+    messagingSenderId: "1013540017488",
+    appId: "1:1013540017488:web:b23388aaec60e6b53e8855"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const COL = collection(db, 'reservations');
+
+  // 전역 노출
+  window._db = db;
+  window._COL = COL;
+  window._getDocs = getDocs;
+  window._addDoc = addDoc;
+  window._deleteDoc = deleteDoc;
+  window._doc = doc;
+  window._query = query;
+  window._orderBy = orderBy;
+
+  // 초기 로드
+  await loadReservations();
+</script>
+
 <script>
-  const STORAGE_KEY = 'morningbrew_reservations';
-
-  // localStorage에서 불러오기
-  let reservations = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+  async function loadReservations() {
+    try {
+      const q = window._query(window._COL, window._orderBy('time'));
+      const snap = await window._getDocs(q);
+      const list = [];
+      snap.forEach(d => list.push({ firestoreId: d.id, ...d.data() }));
+      renderList(list);
+    } catch(e) { console.error(e); }
   }
 
-  function addReservation() {
+  async function addReservation() {
     const name   = document.getElementById('r-name').value.trim();
     const phone  = document.getElementById('r-phone').value.trim();
     const time   = document.getElementById('r-time').value;
@@ -434,41 +468,45 @@
     if (!phone) { showToast('⚠️ 연락처를 입력해주세요'); return; }
     if (!/^010-\d{4}-\d{4}$/.test(phone)) { showToast('⚠️ 010-0000-0000 형식으로 입력해주세요'); return; }
     if (!time)  { showToast('⚠️ 픽업 시간을 선택해주세요'); return; }
-    reservations.push({ id: Date.now(), name, phone, time, people });
-    reservations.sort((a, b) => a.time.localeCompare(b.time));
-    save();
-    renderList();
-    document.getElementById('r-name').value = '';
-    document.getElementById('r-phone').value = '';
-    document.getElementById('r-time').value = '';
-    document.getElementById('r-people').value = '1';
-    showToast('✓ 예약이 추가되었습니다');
+    try {
+      await window._addDoc(window._COL, { name, phone, time, people, createdAt: Date.now() });
+      document.getElementById('r-name').value = '';
+      document.getElementById('r-phone').value = '';
+      document.getElementById('r-time').value = '';
+      document.getElementById('r-people').value = '1';
+      showToast('✓ 예약이 추가되었습니다');
+      await loadReservations();
+    } catch(e) { showToast('⚠️ 저장 실패: ' + e.message); }
   }
 
-  function deleteReservation(id) {
-    reservations = reservations.filter(r => r.id !== id);
-    save();
-    renderList();
-    showToast('🗑 예약이 삭제되었습니다');
+  async function deleteReservation(firestoreId) {
+    try {
+      await window._deleteDoc(window._doc(window._db, 'reservations', firestoreId));
+      showToast('🗑 예약이 삭제되었습니다');
+      await loadReservations();
+    } catch(e) { showToast('⚠️ 삭제 실패'); }
   }
 
-  function resetAll() {
+  async function resetAll() {
     if (!confirm('예약 목록을 전체 초기화할까요?')) return;
-    reservations = [];
-    save();
-    renderList();
-    showToast('🗑 전체 초기화 완료');
+    try {
+      const snap = await window._getDocs(window._COL);
+      const dels = snap.docs.map(d => window._deleteDoc(window._doc(window._db, 'reservations', d.id)));
+      await Promise.all(dels);
+      showToast('🗑 전체 초기화 완료');
+      await loadReservations();
+    } catch(e) { showToast('⚠️ 초기화 실패'); }
   }
 
-  function renderList() {
+  function renderList(list) {
     const area = document.getElementById('res-list');
-    document.getElementById('res-count').textContent = reservations.length + '건';
-    if (reservations.length === 0) {
+    document.getElementById('res-count').textContent = (list ? list.length : 0) + '건';
+    if (!list || list.length === 0) {
       area.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">아직 예약이 없습니다</div><div class="empty-desc">첫 예약을 추가해 보세요!<br>위 폼에서 이름, 연락처, 픽업 시간을 입력하세요.</div></div>`;
       return;
     }
-    area.innerHTML = `<div class="reservation-list">` + reservations.map((r, i) =>
-      `<div class="reservation-item"><div class="item-info"><div class="item-name">${i+1}. ${esc(r.name)}</div><div class="item-meta"><span class="item-tag">🕐 ${r.time}</span><span class="item-tag">👤 ${r.people}명</span></div><div class="item-number">📞 ${esc(r.phone)}</div></div><button class="btn-delete" onclick="deleteReservation(${r.id})">삭제</button></div>`
+    area.innerHTML = `<div class="reservation-list">` + list.map((r, i) =>
+      `<div class="reservation-item"><div class="item-info"><div class="item-name">${i+1}. ${esc(r.name)}</div><div class="item-meta"><span class="item-tag">🕐 ${r.time}</span><span class="item-tag">👤 ${r.people}명</span></div><div class="item-number">📞 ${esc(r.phone)}</div></div><button class="btn-delete" onclick="deleteReservation('${r.firestoreId}')">삭제</button></div>`
     ).join('') + `</div>`;
   }
 
