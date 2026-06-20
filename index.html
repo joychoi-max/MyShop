@@ -3,9 +3,452 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JoysGlobal</title>
+  <title>모닝브루 — 망원동 핸드드립 카페</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brown:  #6B4226;
+      --dark:   #3D2B1F;
+      --accent: #E07B39;
+      --light:  #F4A261;
+      --bg:     #FFFBF5;
+      --card:   #FFF4E6;
+      --border: #EDD9C0;
+      --text:   #4A3728;
+      --muted:  #8C6D57;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(255,251,245,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--brown);
+    }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(224,123,57,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(244,162,97,0.10) 0%, transparent 60%),
+        var(--bg);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 12vw, 5.5rem);
+      color: var(--brown);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 40px;
+      max-width: 320px;
+    }
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 280px;
+    }
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 16px 32px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 12px;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 20px rgba(224,123,57,0.35);
+    }
+    .btn-primary:hover { background: #c96a28; transform: translateY(-2px); }
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--brown);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 12px;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll {
+      margin-top: 48px;
+      color: var(--border);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(6px); }
+    }
+
+    /* SECTION COMMON */
+    section { padding: 72px 24px; }
+    .section-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 6vw, 2.6rem);
+      color: var(--brown);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+    }
+    .inner { max-width: 480px; margin: 0 auto; }
+
+    /* MENU */
+    #menu { background: #FFF8F0; }
+    .menu-grid { display: grid; gap: 14px; }
+    .menu-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .menu-card:hover {
+      box-shadow: 0 6px 24px rgba(107,66,38,0.10);
+      transform: translateY(-2px);
+    }
+    .menu-info { display: flex; align-items: center; gap: 14px; }
+    .menu-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .menu-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: block;
+    }
+    .menu-note { font-size: 0.8rem; color: var(--muted); }
+    .menu-price {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* INFO */
+    #info { background: var(--bg); }
+    .info-cards { display: flex; flex-direction: column; gap: 16px; }
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .info-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+    .info-card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .info-card-body {
+      font-size: 0.95rem;
+      color: var(--dark);
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    .info-card-body strong { color: var(--accent); }
+
+    /* CONTACT */
+    #contact { background: var(--brown); text-align: center; }
+    #contact .section-label { color: var(--light); }
+    #contact .section-title { color: #fff; }
+    #contact .section-desc { color: rgba(255,255,255,0.65); }
+    .contact-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .btn-insta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 12px;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .btn-insta:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-phone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      transition: background 0.2s;
+    }
+    .btn-phone:hover { background: rgba(255,255,255,0.22); }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 0.8rem;
+    }
+    footer a { color: rgba(255,255,255,0.55); text-decoration: none; }
+
+    /* DESKTOP */
+    @media (min-width: 640px) {
+      nav { padding: 18px 48px; }
+      section { padding: 96px 48px; }
+      .inner { max-width: 600px; }
+      .hero-cta { flex-direction: row; max-width: 360px; }
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+      .info-cards { flex-direction: row; flex-wrap: wrap; }
+      .info-card { flex: 1 1 calc(50% - 8px); }
+      .contact-btns { flex-direction: row; max-width: 420px; }
+    }
+  </style>
 </head>
 <body>
-  <h1>안녕하세요, 저는 최윤정입니다</h1>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">Morning Brew</span>
+  <div class="nav-links">
+    <a href="#menu">메뉴</a>
+    <a href="#info">오시는 길</a>
+    <a href="#contact">문의</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <span class="hero-badge">☕ 망원동 핸드드립 카페</span>
+  <h1 class="hero-title">모닝<em>브루</em></h1>
+  <p class="hero-sub">매일 아침, 직접 내리는 한 잔으로 하루를 시작하세요</p>
+  <div class="hero-cta">
+    <a href="#menu" class="btn-primary">메뉴 보기</a>
+    <a href="#info" class="btn-secondary">오시는 길</a>
+  </div>
+  <p class="hero-scroll">↓ scroll</p>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="inner">
+    <span class="section-label">Our Menu</span>
+    <h2 class="section-title">대표 메뉴</h2>
+    <p class="section-desc">매일 신선하게 준비합니다</p>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-info">
+          <div class="menu-icon">☕</div>
+          <div>
+            <span class="menu-name">핸드드립 커피</span>
+            <span class="menu-note">매일 아침 직접 내림</span>
+          </div>
+        </div>
+        <span class="menu-price">5,500원</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-info">
+          <div class="menu-icon">🫘</div>
+          <div>
+            <span class="menu-name">오늘의 원두</span>
+            <span class="menu-note">당일 추천 싱글 오리진</span>
+          </div>
+        </div>
+        <span class="menu-price">4,500원</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-info">
+          <div class="menu-icon">🥐</div>
+          <div>
+            <span class="menu-name">수제 스콘</span>
+            <span class="menu-note">당일 구운 신선함</span>
+          </div>
+        </div>
+        <span class="menu-price">3,500원</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-info">
+          <div class="menu-icon">🍹</div>
+          <div>
+            <span class="menu-name">계절 과일 에이드</span>
+            <span class="menu-note">제철 과일로 만든 에이드</span>
+          </div>
+        </div>
+        <span class="menu-price">6,000원</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INFO -->
+<section id="info">
+  <div class="inner">
+    <span class="section-label">Find Us</span>
+    <h2 class="section-title">오시는 길</h2>
+    <p class="section-desc">망원동 골목 끝, 조용한 자리에서 기다립니다</p>
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-card-title">위치</div>
+          <div class="info-card-body">서울 망원동 골목 끝<br><strong>망원역 2번 출구 도보 6분</strong></div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🕗</div>
+        <div>
+          <div class="info-card-title">영업시간</div>
+          <div class="info-card-body">화 ~ 일 <strong>08:00 ~ 20:00</strong><br>월요일 정기 휴무</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🪑</div>
+        <div>
+          <div class="info-card-title">분위기</div>
+          <div class="info-card-body">혼자 와도 편한<br><strong>1인 좌석 완비</strong></div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">✨</div>
+        <div>
+          <div class="info-card-title">특징</div>
+          <div class="info-card-body">매일 아침 직접 핸드드립<br><strong>당일 구운 스콘 한정 판매</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="inner">
+    <span class="section-label">Contact</span>
+    <h2 class="section-title">찾아오세요</h2>
+    <p class="section-desc">인스타그램 DM 또는 전화로 문의해 주세요</p>
+    <div class="contact-btns">
+      <a href="https://instagram.com/morningbrew_official" target="_blank" class="btn-insta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        @morningbrew_official
+      </a>
+      <a href="tel:02-123-4567" class="btn-phone">
+        📞 02-123-4567
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 모닝브루 Morning Brew · 서울 망원동</p>
+  <p style="margin-top:6px"><a href="https://instagram.com/morningbrew_official" target="_blank">@morningbrew_official</a></p>
+</footer>
+
 </body>
 </html>
