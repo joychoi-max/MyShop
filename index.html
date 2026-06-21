@@ -612,7 +612,7 @@
 
     try {
       const { error: sbError } = await _sb.from('reservations').insert([{
-        name, phone, menu_preference: menu, time, count: Number(people)
+        name, phone, menu_preference: menu, time, count: Number(people), status: 'pending'
       }]);
       if (sbError) throw sbError;
 

@@ -567,7 +567,8 @@
 
   /* ── 통계 업데이트 ── */
   function updateStats() {
-    const count = s => allData.filter(r => r.status === s).length;
+    const eff = r => r.status || 'pending'; // null → pending 취급
+    const count = s => allData.filter(r => eff(r) === s).length;
     document.getElementById('stat-total').textContent = allData.length;
     document.getElementById('stat-pending').textContent = count('pending');
     document.getElementById('stat-confirmed').textContent = count('confirmed');
