@@ -561,19 +561,20 @@
     }
 
     allData = data || [];
-    updateStats();
-    renderTable();
+    renderTable();   // DOM 먼저 그린 후
+    updateStats();   // select 값 기준으로 집계
   }
 
   /* ── 통계 업데이트 ── */
   function updateStats() {
-    const eff = r => r.status || 'pending'; // null → pending 취급
-    const count = s => allData.filter(r => eff(r) === s).length;
+    // DOM의 select 값 기준으로 집계 (null/undefined status 모두 안전하게 처리)
+    const selects = [...document.querySelectorAll('tbody .status-select')];
+    const domCount = s => selects.filter(el => el.value === s).length;
     document.getElementById('stat-total').textContent = allData.length;
-    document.getElementById('stat-pending').textContent = count('pending');
-    document.getElementById('stat-confirmed').textContent = count('confirmed');
-    document.getElementById('stat-completed').textContent = count('completed');
-    document.getElementById('stat-cancelled').textContent = count('cancelled');
+    document.getElementById('stat-pending').textContent = domCount('pending');
+    document.getElementById('stat-confirmed').textContent = domCount('confirmed');
+    document.getElementById('stat-completed').textContent = domCount('completed');
+    document.getElementById('stat-cancelled').textContent = domCount('cancelled');
   }
 
   /* ── 필터 ── */
