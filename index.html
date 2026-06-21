@@ -323,15 +323,47 @@
     footer a { color: rgba(255,255,255,0.55); text-decoration: none; }
 
     /* DESKTOP */
-    @media (min-width: 640px) {
-      nav { padding: 18px 48px; }
-      section { padding: 96px 48px; }
+    /* ── 모바일 기본 (~ 639px) ── */
+    @media (max-width: 639px) {
+      nav { padding: 0 16px; height: 56px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.75rem; }
+      #hero { padding: 90px 6% 60px; align-items: center; text-align: center; }
+      .hero-title { font-size: clamp(2.2rem,10vw,3rem); text-align: center; max-width: 100%; }
+      .hero-title .sub-label { font-size: 0.78rem; letter-spacing: 0.08em; }
+      .hero-sub { font-size: 0.88rem; max-width: 100%; text-align: center; margin-bottom: 32px; }
+      .hero-cta { flex-direction: column; width: 100%; max-width: 280px; gap: 10px; }
+      .btn-primary, .btn-secondary { padding: 13px 24px; font-size: 0.88rem; }
+      .hero-badge { font-size: 0.68rem; padding: 5px 14px; }
+      section { padding: 56px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .today-grid { grid-template-columns: 1fr; }
+      .info-cards { flex-direction: column; }
+    }
+    /* ── 태블릿 (640px ~ 1023px) ── */
+    @media (min-width: 640px) and (max-width: 1023px) {
+      nav { padding: 0 28px; }
+      section { padding: 80px 40px; }
       .inner { max-width: 600px; }
-      .hero-cta { flex-direction: row; max-width: 360px; }
+      #hero { padding: 100px 6% 70px; }
+      .hero-cta { flex-direction: row; max-width: 380px; }
       .menu-grid { grid-template-columns: 1fr 1fr; }
       .today-grid { grid-template-columns: 1fr 1fr; }
       .info-cards { flex-direction: row; flex-wrap: wrap; }
       .info-card { flex: 1 1 calc(50% - 8px); }
+      .contact-btns { flex-direction: row; max-width: 420px; }
+    }
+    /* ── 데스크탑 (1024px~) ── */
+    @media (min-width: 1024px) {
+      nav { padding: 0 48px; }
+      section { padding: 96px 56px; }
+      .inner { max-width: 680px; }
+      #hero { padding: 120px 8% 80px; }
+      .hero-cta { flex-direction: row; }
+      .menu-grid { grid-template-columns: repeat(3, 1fr); }
+      .today-grid { grid-template-columns: 1fr 1fr; }
+      .info-cards { flex-direction: row; }
       .contact-btns { flex-direction: row; max-width: 420px; }
     }
   </style>
