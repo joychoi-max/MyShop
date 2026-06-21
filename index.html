@@ -106,105 +106,125 @@
       justify-content: center; align-items: center; text-align: center;
       padding: 100px 24px 60px;
       position: relative; overflow: hidden;
-      background: #f0e8dc;
+      background: #f5ede3;
     }
-    /* 배경 이미지 — 밝고 따뜻하게 */
+    /* 배경: 라떼아트+식물, 밝고 따뜻하게 */
     #hero-bg {
-      position: absolute; inset: 0; z-index: 0;
+      position: absolute; inset: -6%; z-index: 0;
       background: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80&fit=crop') center/cover no-repeat;
-      filter: brightness(1.15) saturate(1.1);
-      transform-origin: center;
+      filter: brightness(1.08) saturate(1.05);
       will-change: transform;
-      transition: transform 0.08s ease-out;
+      transition: transform 0.12s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    /* 워밍 오버레이 — 크림색으로 화사하게 */
+    /* 크림 워밍 오버레이 — 아주 얇게 */
     #hero::after {
-      content: '';
-      position: absolute; inset: 0; z-index: 1;
+      content: ''; position: absolute; inset: 0; z-index: 1;
       background: linear-gradient(
-        160deg,
-        rgba(255,248,235,0.55) 0%,
-        rgba(255,230,180,0.25) 40%,
-        rgba(60,25,10,0.45) 100%
+        170deg,
+        rgba(255,252,245,0.38) 0%,
+        rgba(255,235,200,0.15) 45%,
+        rgba(50,20,5,0.42) 100%
       );
     }
     #hero > * { position: relative; z-index: 2; }
 
-    /* 플로팅 파티클 */
-    .particle {
-      position: absolute; z-index: 1; pointer-events: none;
-      font-size: 1.4rem; opacity: 0;
-      animation: floatUp linear infinite;
+    /* 보케 파티클 (이모지 없이 CSS만) */
+    .bokeh {
+      position: absolute; z-index: 1; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(255,220,150,0.55) 0%, transparent 70%);
+      animation: floatBokeh ease-in-out infinite;
     }
-    @keyframes floatUp {
-      0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
-      10%  { opacity: 0.7; }
-      90%  { opacity: 0.4; }
-      100% { opacity: 0; transform: translateY(-100vh) rotate(360deg) scale(1.2); }
+    @keyframes floatBokeh {
+      0%,100% { transform: translateY(0) scale(1); opacity: 0.5; }
+      50%      { transform: translateY(-28px) scale(1.12); opacity: 0.8; }
     }
 
-    /* 히어로 텍스트 애니메이션 */
+    /* 커서 글로우 */
+    #cursor-glow {
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(224,123,57,0.18) 0%, transparent 65%);
+      position: fixed; pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: left 0.18s ease, top 0.18s ease;
+    }
+
+    /* 뱃지 */
     .hero-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.55); border: 1px solid rgba(255,200,120,0.6);
-      color: #7a4a1a; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
-      padding: 7px 18px; border-radius: 999px; margin-bottom: 28px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 12px rgba(224,123,57,0.18);
-      opacity: 0; animation: fadeSlideUp 0.7s 0.2s forwards;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.6); border: 1px solid rgba(200,150,80,0.4);
+      color: #7a4a1a; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.07em;
+      padding: 7px 20px; border-radius: 999px; margin-bottom: 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 14px rgba(224,123,57,0.12);
+      opacity: 0; animation: fadeSlideUp 0.7s 0.2s cubic-bezier(0.22,1,0.36,1) forwards;
     }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #e07b39; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+    /* 타이틀 */
     .hero-title {
-      font-family: 'Playfair Display', serif; font-size: clamp(3rem,12vw,5.5rem);
-      color: #3D2B1F; line-height: 1.1; margin-bottom: 8px;
-      text-shadow: 0 2px 24px rgba(255,240,220,0.8), 0 0 60px rgba(255,255,255,0.4);
-      opacity: 0; animation: fadeSlideUp 0.8s 0.45s forwards;
+      font-family: 'Playfair Display', serif; font-size: clamp(3.2rem,12vw,5.8rem);
+      color: #fff; line-height: 1.08; margin-bottom: 10px;
+      text-shadow: 0 4px 32px rgba(30,10,0,0.35), 0 1px 0 rgba(0,0,0,0.1);
+      opacity: 0; animation: fadeSlideUp 0.85s 0.42s cubic-bezier(0.22,1,0.36,1) forwards;
     }
-    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-title .sub-label {
+      font-size: clamp(0.95rem,3.5vw,1.4rem); font-family:'Noto Sans KR',sans-serif;
+      font-weight: 400; display: block; margin-bottom: 6px;
+      color: rgba(255,255,255,0.88); letter-spacing: 0.06em;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+    }
+    .hero-title em { font-style: italic; color: #f4c07a; }
+
     .hero-sub {
-      font-size: clamp(1rem,3vw,1.15rem); color: #5a3820; font-weight: 400;
-      margin-bottom: 40px; max-width: 320px;
-      text-shadow: 0 1px 6px rgba(255,245,230,0.9);
-      opacity: 0; animation: fadeSlideUp 0.8s 0.65s forwards;
+      font-size: clamp(0.95rem,2.5vw,1.1rem); color: rgba(255,255,255,0.85);
+      font-weight: 300; margin-bottom: 44px; max-width: 300px; line-height: 1.8;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+      opacity: 0; animation: fadeSlideUp 0.85s 0.62s cubic-bezier(0.22,1,0.36,1) forwards;
     }
     .hero-cta {
-      display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px;
-      opacity: 0; animation: fadeSlideUp 0.8s 0.85s forwards;
+      display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 270px;
+      opacity: 0; animation: fadeSlideUp 0.85s 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
     }
     @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    /* 버튼 리플 */
+    /* 버튼 */
     .btn-primary {
-      display: block; width: 100%; padding: 16px 32px; background: var(--accent); color: #fff;
-      text-decoration: none; font-size: 1rem; font-weight: 700; border-radius: 14px; text-align: center;
-      transition: background 0.2s, transform 0.18s, box-shadow 0.2s;
-      box-shadow: 0 4px 22px rgba(224,123,57,0.45);
+      display: block; width: 100%; padding: 16px 32px;
+      background: linear-gradient(135deg, #e07b39 0%, #c96028 100%);
+      color: #fff; text-decoration: none; font-size: 1rem; font-weight: 700;
+      border-radius: 14px; text-align: center;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s;
+      box-shadow: 0 6px 24px rgba(224,123,57,0.42);
       position: relative; overflow: hidden;
     }
     .btn-primary::after {
-      content: ''; position: absolute; inset: 0; border-radius: 14px;
-      background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
-      opacity: 0; transition: opacity 0.4s;
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+      border-radius: 14px; opacity: 0; transition: opacity 0.3s;
     }
-    .btn-primary:hover { background: #d46f24; transform: translateY(-3px); box-shadow: 0 8px 32px rgba(224,123,57,0.55); }
+    .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 36px rgba(224,123,57,0.5); }
     .btn-primary:hover::after { opacity: 1; }
-    .btn-primary:active { transform: translateY(0) scale(0.97); }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
     .btn-secondary {
-      display: block; width: 100%; padding: 14px 32px;
-      background: rgba(255,255,255,0.45); color: #4A3728;
-      text-decoration: none; font-size: 0.95rem; font-weight: 600; border-radius: 14px; text-align: center;
-      border: 1.5px solid rgba(107,66,38,0.3); transition: all 0.2s;
-      backdrop-filter: blur(8px);
+      display: block; width: 100%; padding: 15px 32px;
+      background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.92);
+      text-decoration: none; font-size: 0.95rem; font-weight: 500;
+      border-radius: 14px; text-align: center;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      transition: background 0.2s, transform 0.2s, border-color 0.2s;
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.7); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-
+    .btn-secondary:hover { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.7); transform: translateY(-2px); }
     .hero-scroll {
-      margin-top: 48px; color: rgba(80,45,20,0.55); font-size: 0.78rem; letter-spacing: 0.1em;
-      animation: bounce 2s infinite;
+      margin-top: 52px; color: rgba(255,255,255,0.5); font-size: 0.72rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      animation: bounce 2.5s ease-in-out infinite;
     }
-    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 
     /* SECTION COMMON */
     section { padding: 72px 24px; }
@@ -356,11 +376,15 @@
 </nav>
 
 <!-- HERO -->
+<div id="cursor-glow"></div>
 <section id="hero">
   <div id="hero-bg"></div>
-  <span class="hero-badge">☕ 망원동 핸드드립 카페 · 매일 08:00 오픈</span>
-  <h1 class="hero-title"><span style="font-size:clamp(1.1rem,4vw,1.6rem);font-family:'Noto Sans KR',sans-serif;font-weight:500;display:block;margin-bottom:4px;color:#8B5E3C">망원동 핸드드립 카페</span>모닝<em>브루</em></h1>
-  <p class="hero-sub">매일 아침, 직접 내리는 한 잔으로 하루를 시작하세요</p>
+  <span class="hero-badge">망원동 핸드드립 카페 · 매일 08:00 오픈</span>
+  <h1 class="hero-title">
+    <span class="sub-label">망원동 핸드드립 카페</span>
+    모닝<em>브루</em>
+  </h1>
+  <p class="hero-sub">매일 아침, 직접 내리는<br>한 잔으로 하루를 시작하세요</p>
   <div class="hero-cta">
     <a href="#today" class="btn-primary">오늘 메뉴 확인</a>
     <a href="#info" class="btn-secondary">오시는 길</a>
@@ -714,6 +738,16 @@
 </script>
 
 <script>
+  /* ── 커서 글로우 ── */
+  (function() {
+    const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top  = e.clientY + 'px';
+    });
+  })();
+
   /* ── 마우스 패럴랙스 ── */
   (function() {
     const bg = document.getElementById('hero-bg');
@@ -722,51 +756,51 @@
     let tx = 0, ty = 0, cx = 0, cy = 0;
     hero.addEventListener('mousemove', e => {
       const r = hero.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width  - 0.5) * 18;
-      ty = ((e.clientY - r.top)  / r.height - 0.5) * 12;
+      tx = ((e.clientX - r.left) / r.width  - 0.5) * 14;
+      ty = ((e.clientY - r.top)  / r.height - 0.5) * 8;
     });
     hero.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
     (function raf() {
-      cx += (tx - cx) * 0.07;
-      cy += (ty - cy) * 0.07;
-      bg.style.transform = `translate(${cx}px,${cy}px) scale(1.06)`;
+      cx += (tx - cx) * 0.05;
+      cy += (ty - cy) * 0.05;
+      bg.style.transform = `translate(${cx}px,${cy}px)`;
       requestAnimationFrame(raf);
     })();
   })();
 
-  /* ── 플로팅 파티클 ── */
+  /* ── 보케 파티클 생성 ── */
   (function() {
     const hero = document.getElementById('hero');
     if (!hero) return;
-    const emojis = ['☕','✨','🌿','☁️','🫖','💛'];
-    function spawn() {
-      const p = document.createElement('span');
-      p.className = 'particle';
-      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      const size = 0.8 + Math.random() * 0.9;
-      const dur  = 7 + Math.random() * 8;
-      const left = 5 + Math.random() * 90;
-      p.style.cssText = `left:${left}%;bottom:-40px;font-size:${size}rem;animation-duration:${dur}s;animation-delay:${Math.random()*3}s`;
-      hero.appendChild(p);
-      setTimeout(() => p.remove(), (dur + 3) * 1000);
-    }
-    for (let i = 0; i < 8; i++) setTimeout(spawn, i * 600);
-    setInterval(spawn, 2200);
+    const specs = [
+      {w:80, h:80, left:'8%',  top:'20%', dur:6,  del:0},
+      {w:50, h:50, left:'85%', top:'15%', dur:8,  del:1.5},
+      {w:100,h:100,left:'75%', top:'60%', dur:10, del:0.8},
+      {w:40, h:40, left:'15%', top:'70%', dur:7,  del:2.2},
+      {w:65, h:65, left:'50%', top:'85%', dur:9,  del:0.4},
+    ];
+    specs.forEach(s => {
+      const el = document.createElement('div');
+      el.className = 'bokeh';
+      el.style.cssText = `width:${s.w}px;height:${s.h}px;left:${s.left};top:${s.top};animation-duration:${s.dur}s;animation-delay:${s.del}s`;
+      hero.appendChild(el);
+    });
   })();
 
   /* ── 스크롤 리빌 ── */
   (function() {
-    const observer = new IntersectionObserver(entries => {
+    const obs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.style.opacity = '1';
           e.target.style.transform = 'translateY(0)';
+          obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('section:not(#hero)').forEach(s => {
-      s.style.cssText += ';opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease';
-      observer.observe(s);
+    }, { threshold: 0.1 });
+    document.querySelectorAll('section:not(#hero), .menu-card, .today-card').forEach(el => {
+      el.style.cssText += ';opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease';
+      obs.observe(el);
     });
   })();
 
