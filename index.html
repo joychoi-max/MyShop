@@ -759,6 +759,12 @@
       // Firebase INSERT (기존 목록 표시용)
       await window._addDoc(window._COL, { name, phone, menu, time, people, createdAt: Date.now() });
 
+      // [DEBUG] localStorage 저장
+      const stored = JSON.parse(localStorage.getItem('mb_reservations') || '[]');
+      stored.push({ name, phone, menu_preference: menu, time, count: Number(people), savedAt: new Date().toISOString() });
+      localStorage.setItem('mb_reservations', JSON.stringify(stored));
+      console.log('[DEBUG] localStorage 저장 완료:', stored);
+
       // 폼 초기화
       document.getElementById('r-name').value = '';
       document.getElementById('r-phone').value = '';
